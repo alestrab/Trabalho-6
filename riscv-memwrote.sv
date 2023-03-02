@@ -1,56 +1,3 @@
-// riscv_multi.sv
-// menotti@ufscar.br 13 May 2021
-// Multi-cycle implementation of a subset of RISC-V
-
-// Based on:
-// David_Harris@hmc.edu and Sarah_Harris@hmc.edu 26 July 2011 
-// Multi-cycle implementation of a subset of MIPS
-
-// 32 32-bit registers
-// Common fields for all types (exceptions with * below)
-//   Instr[24:20] = rs2
-//   Instr[19:15] = rs1
-//   Instr[14:12] = Funct3
-//   Instr[11: 7] = rd
-//   Instr[ 6: 0] = Opcode:
-//					R = 0110011
-//					I = 0010011 (data-processing)
-//					I = 0000011 (data-load)
-//					S = 0100011 (data-store)
-//					B = 1100011 (branch)
-//					J = 1101111 (jal)
-//					U = 1100011 (lui)
-//					U = 0000011 (auipc)
-
-// Data-processing instructions (register)
-//   ADD, SUB, AND, OR
-//   INSTR <Rd>, <Rs1>, <Rs2>
-//    Rd <- <Rs1> INSTR <Rs2>
-//   Instr[31:25] = Funct7
-//					SUB, SRA = 0100000
-//					others   = 0000000
-//   Instr[14:12] = Funct3
-//					ADD = 000
-//					SUB	= 000
-//					AND = 111
-//					OR  = 110
-//					XOR = 100
-
-// Data-processing instructions (immediate)
-//   ADDI, ANDI, ORI
-//   INSTR <Rd>, <Rs1>, <Rs2>
-//    Rd <- <Rs1> INSTR <Rs2>
-//   Instr[31:25] = Funct7
-//					SUB, SRA = 0100000
-//					others   = 0000000
-//   Instr[14:12] = Funct3
-//					ADD = 000
-//					SUB	= 000
-//					AND = 111
-//					OR  = 110
-//					XOR = 100
-
-
 module top(
   input  sysclk,
   output [3:0] VGA_R, VGA_G, VGA_B, 
@@ -865,11 +812,11 @@ module alu(input  logic [31:0] a, b,
   assign sum = a + condinvb + alucontrol[2];
 
   always_comb
-    case (alucontrol[1:0])
-      2'b00: result = a & b;
-      2'b01: result = a | b;
-      2'b10: result = sum;
-      2'b11: result = sum[31];
+    case (alucontrol[2:0])
+      3'b000: result = a & b;
+      3'b001: result = a | b;
+      3'b010: result = sum;
+      3'b011: result = sum[31];
     endcase
 
   assign zero = (result == 32'b0);
